@@ -4,8 +4,6 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-#use Adldap\Laravel\Facades\Adldap;
-use App\Http\Middleware\TokenUser;
 use App\Helpers\Oreno\General;
 use App\Helpers\Oreno\Date;
 use App\Helpers\Oreno\Jwt;
@@ -27,8 +25,6 @@ class Authenticate {
     public function __construct() {
         $this->AppEntity = new AppEntity();
         $this->General = new General();
-        $this->TokenUser = new TokenUser();
-        //$this->ldap_connect();
         $this->Jwt = new Jwt();
         $this->Date = new Date();
         $this->Cookies = new Cookies();
@@ -49,6 +45,7 @@ class Authenticate {
 
     public function handle(Request $request, Closure $next) {
         $currentPath = Route::getFacadeRoot()->current()->uri();
+        dd($currentPath);
         $param_cookies = [
             'name' => 'is_first_load',
             'value' => true,
