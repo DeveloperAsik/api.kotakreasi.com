@@ -22,7 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))->withRouting(
                 \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
                 \App\Http\Middleware\TrustProxies::class,
                 \App\Http\Middleware\TrimStrings::class,
-                \App\Http\Middleware\Authenticate
+                \App\Http\Middleware\Authenticate::class
             ]);
         })->withExceptions(function (Exceptions $exceptions) {
             //
