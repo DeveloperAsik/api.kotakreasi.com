@@ -33,45 +33,49 @@ class Authenticate {
     }
 
     /**
-     * Get the path the user should be redirected to when they are not authenticated.
+
+     * Handle an incoming request.
+
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return string|null
+
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+
      */
-    protected function redirectTo($request) {
-        if (!$request->expectsJson()) {
-            return route('login');
+    public function handle(Request $request, Closure $next): Response {
+        if ($request->input('token') !== 'my-secret-token') {
+            return redirect('/home');
         }
+        return $next($request);
     }
 
-    public function handle(Request $request, Closure $next) {
-        var_dump('waw');exit();
-        $currentPath = Route::getFacadeRoot()->current()->uri();
-        dd($currentPath);
-        $param_cookies = [
-            'name' => 'is_first_load',
-            'value' => true,
-            'minutes' => 86400,
-            'path' => url()->full()
-        ];
-        $this->Cookies->_create( $param_cookies);
-        $curr_cookie = $this->Cookies->_get($request, $param_cookies);
-        $authAccessServices = $this->initServices($request, $currentPath);
-        if ($authAccessServices && $authAccessServices['is_valid'] == true) {
-            return $next($request);
-        } else {
-            if ($request->ajax()) {
-                $response_data = array('status' => 401, 'message' => 'This url need login session to accessed');
-                return response()->json($response_data, 401);
-            } else {
-                if ($currentPath != 'extraweb/login') {
-                    session(['_session_destination_path' => '/' . $currentPath]);
-                    session()->save();
-                }
-                return redirect('/extraweb/login')->with(['warning-msg' => 'This page need login session, please login first!']);
-            }
-        }
-    }
+//    public function handle(Request $request, Closure $next) {
+//        var_dump('waw');exit();
+//        $currentPath = Route::getFacadeRoot()->current()->uri();
+//        dd($currentPath);
+//        $param_cookies = [
+//            'name' => 'is_first_load',
+//            'value' => true,
+//            'minutes' => 86400,
+//            'path' => url()->full()
+//        ];
+//        $this->Cookies->_create( $param_cookies);
+//        $curr_cookie = $this->Cookies->_get($request, $param_cookies);
+//        $authAccessServices = $this->initServices($request, $currentPath);
+//        if ($authAccessServices && $authAccessServices['is_valid'] == true) {
+//            return $next($request);
+//        } else {
+//            if ($request->ajax()) {
+//                $response_data = array('status' => 401, 'message' => 'This url need login session to accessed');
+//                return response()->json($response_data, 401);
+//            } else {
+//                if ($currentPath != 'extraweb/login') {
+//                    session(['_session_destination_path' => '/' . $currentPath]);
+//                    session()->save();
+//                }
+//                return redirect('/extraweb/login')->with(['warning-msg' => 'This page need login session, please login first!']);
+//            }
+//        }
+//    }
 
     protected function initServices($request, $currentPath) {
         $response = false;
