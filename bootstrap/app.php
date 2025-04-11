@@ -16,7 +16,6 @@ return Application::configure(basePath: dirname(__DIR__))->withRouting(
                 \Illuminate\Http\Middleware\HandleCors::class,
                 \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
                 \Illuminate\Http\Middleware\FrameGuard::class,
-                \Fruitcake\Cors\HandleCors::class,
                 \App\Http\Middleware\Cors::class,
                 \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
                 \App\Http\Middleware\TrustProxies::class,
