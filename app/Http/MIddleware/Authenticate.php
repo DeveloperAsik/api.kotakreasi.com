@@ -44,6 +44,7 @@ class Authenticate {
     }
 
     public function handle(Request $request, Closure $next) {
+        var_dump('waw');exit();
         $currentPath = Route::getFacadeRoot()->current()->uri();
         dd($currentPath);
         $param_cookies = [
