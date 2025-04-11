@@ -5,8 +5,9 @@ use Illuminate\Http\Request;
 
 Route::middleware(['auth'])->group(function ($e) {
     Route::get('/', function () {
-        Route::get('/api/lists', 'App\Http\Controllers\Api\UserController@view')->name('api.user.view');
+        dd('iyey');
     });
+        Route::get('/api/lists', 'App\Http\Controllers\Api\UserController@view')->name('api.user.view');
     /*
      * 
      * extraweb routes start here
