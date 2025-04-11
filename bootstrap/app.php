@@ -9,7 +9,6 @@ return Application::configure(basePath: dirname(__DIR__))->withRouting(
                 commands: __DIR__ . '/../routes/console.php',
                 health: '/up',
         )->withMiddleware(function (Middleware $middleware) {
-            $middleware->prepend(Authenticate::class);
             $middleware->use([
                 \Illuminate\Session\Middleware\StartSession::class,
                 \Illuminate\View\Middleware\ShareErrorsFromSession::class,
