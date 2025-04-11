@@ -2,15 +2,16 @@
 
 namespace App\Http\Middleware;
 
+use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpFoundation\Response;
 use App\Helpers\Oreno\General;
 use App\Helpers\Oreno\Date;
 use App\Helpers\Oreno\Jwt;
 use App\Helpers\Oreno\Converter;
 use App\Helpers\Oreno\Cookies;
 use App\Models\Entity\AppEntity;
-use Closure;
 
 class Authenticate {
 
