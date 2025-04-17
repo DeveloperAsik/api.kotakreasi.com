@@ -180,6 +180,19 @@ trait EnumeratesValues
     }
 
     /**
+     * Create a new collection by decoding a JSON string.
+     *
+     * @param  string  $json
+     * @param  int  $depth
+     * @param  int  $flags
+     * @return static<TKey, TValue>
+     */
+    public static function fromJson($json, $depth = 512, $flags = 0)
+    {
+        return new static(json_decode($json, true, $depth, $flags));
+    }
+
+    /**
      * Get the average value of a given key.
      *
      * @param  (callable(TValue): float|int)|string|null  $callback
@@ -342,7 +355,7 @@ trait EnumeratesValues
      *
      * @template TEnsureOfType
      *
-     * @param  class-string<TEnsureOfType>|array<array-key, class-string<TEnsureOfType>>|scalar|'array'|'null'  $type
+     * @param  class-string<TEnsureOfType>|array<array-key, class-string<TEnsureOfType>>|'string'|'int'|'float'|'bool'|'array'|'null'  $type
      * @return static<TKey, TEnsureOfType>
      *
      * @throws \UnexpectedValueException
@@ -505,8 +518,8 @@ trait EnumeratesValues
     public function partition($key, $operator = null, $value = null)
     {
         $callback = func_num_args() === 1
-                ? $this->valueRetriever($key)
-                : $this->operatorForWhere(...func_get_args());
+            ? $this->valueRetriever($key)
+            : $this->operatorForWhere(...func_get_args());
 
         [$passed, $failed] = Arr::partition($this->getIterator(), $callback);
 
@@ -535,8 +548,10 @@ trait EnumeratesValues
     /**
      * Get the sum of the given values.
      *
-     * @param  (callable(TValue): mixed)|string|null  $callback
-     * @return mixed
+     * @template TReturnType
+     *
+     * @param  (callable(TValue): TReturnType)|string|null  $callback
+     * @return ($callback is callable ? TReturnType : mixed)
      */
     public function sum($callback = null)
     {
@@ -991,8 +1006,8 @@ trait EnumeratesValues
     public function __toString()
     {
         return $this->escapeWhenCastingToString
-                    ? e($this->toJson())
-                    : $this->toJson();
+            ? e($this->toJson())
+            : $this->toJson();
     }
 
     /**
@@ -1044,11 +1059,8 @@ trait EnumeratesValues
      */
     protected function getArrayableItems($items)
     {
-        if (is_array($items)) {
-            return $items;
-        }
-
         return match (true) {
+            is_array($items) => $items,
             $items instanceof WeakMap => throw new InvalidArgumentException('Collections can not be created using instances of WeakMap.'),
             $items instanceof Enumerable => $items->all(),
             $items instanceof Arrayable => $items->toArray(),

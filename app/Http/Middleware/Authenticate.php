@@ -10,6 +10,7 @@ use App\Helpers\Oreno\General;
 use App\Helpers\Oreno\Date;
 use App\Helpers\Oreno\Jwt;
 use App\Helpers\Oreno\Converter;
+use App\Helpers\Oreno\Url;
 use App\Helpers\Oreno\Cookies;
 use App\Models\Entity\AppEntity;
 
@@ -22,6 +23,7 @@ class Authenticate {
     protected $Date;
     protected $Cookies;
     protected $Converter;
+    protected $Url;
 
     public function __construct() {
         $this->AppEntity = new AppEntity();
@@ -29,6 +31,7 @@ class Authenticate {
         $this->Jwt = new Jwt();
         $this->Date = new Date();
         $this->Cookies = new Cookies();
+        $this->Url = new Url();
         $this->Converter = new Converter();
     }
 
@@ -41,39 +44,38 @@ class Authenticate {
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
 
      */
-    public function handle(Request $request, Closure $next): Response {
-        //return redirect('/home');
-        return $next($request);
-    }
-
-//    public function handle(Request $request, Closure $next) {
-//        var_dump('waw');exit();
-//        $currentPath = Route::getFacadeRoot()->current()->uri();
+//    public function handle(Request $request, Closure $next): Response {
+//        $currentPath = Route::getFacadeRoot();
 //        dd($currentPath);
-//        $param_cookies = [
-//            'name' => 'is_first_load',
-//            'value' => true,
-//            'minutes' => 86400,
-//            'path' => url()->full()
-//        ];
-//        $this->Cookies->_create( $param_cookies);
-//        $curr_cookie = $this->Cookies->_get($request, $param_cookies);
-//        $authAccessServices = $this->initServices($request, $currentPath);
-//        if ($authAccessServices && $authAccessServices['is_valid'] == true) {
-//            return $next($request);
-//        } else {
-//            if ($request->ajax()) {
-//                $response_data = array('status' => 401, 'message' => 'This url need login session to accessed');
-//                return response()->json($response_data, 401);
-//            } else {
-//                if ($currentPath != 'extraweb/login') {
-//                    session(['_session_destination_path' => '/' . $currentPath]);
-//                    session()->save();
-//                }
-//                return redirect('/extraweb/login')->with(['warning-msg' => 'This page need login session, please login first!']);
-//            }
-//        }
+//        return $next($request);
 //    }
+
+    public function handle(Request $request, Closure $next) {
+        $currentPath = $this->Url->get_path();
+        $param_cookies = [
+            'name' => 'is_first_load',
+            'value' => true,
+            'minutes' => 86400,
+            'path' => url()->full()
+        ];
+        $this->Cookies->_create( $param_cookies);
+        $curr_cookie = $this->Cookies->_get($request, $param_cookies);
+        $authAccessServices = $this->initServices($request, $currentPath);
+        if ($authAccessServices && $authAccessServices['is_valid'] == true) {
+            return $next($request);
+        } else {
+            if ($request->ajax()) {
+                $response_data = array('status' => 401, 'message' => 'This url need login session to accessed');
+                return response()->json($response_data, 401);
+            } else {
+                if ($currentPath != 'extraweb/login') {
+                    session(['_session_destination_path' => '/' . $currentPath]);
+                    session()->save();
+                }
+                return redirect('/extraweb/login')->with(['warning-msg' => 'This page need login session, please login first!']);
+            }
+        }
+    }
 
     protected function initServices($request, $currentPath) {
         $response = false;
