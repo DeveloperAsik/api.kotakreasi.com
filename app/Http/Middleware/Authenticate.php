@@ -82,7 +82,7 @@ class Authenticate {
         //get permission by url request from routes 
         $paramsCurrentPermission = [
             'table_name' => 'tbl_c_permissions',
-            'select' => ['id', 'name', 'path', 'alias', 'controller', 'method', 'is_public', 'is_basic', 'is_active'],
+            'select' => ['id', 'code', 'alias', 'path', 'class', 'method', 'is_public', 'is_basic', 'is_active'],
             'conditions' => [
                 'where' => [
                     ['a.path', 'like', '%' . $currentPath . '%']
